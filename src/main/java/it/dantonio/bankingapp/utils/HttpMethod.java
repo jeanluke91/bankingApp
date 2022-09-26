@@ -53,13 +53,13 @@ public class HttpMethod {
 
     }
 
-    public JSONObject doPost(String uri, JSONObject payload) throws IOException {
+    public JSONObject doPost(String uri, String payload) throws IOException {
 
         HttpPost post = new HttpPost(apiURL + uri);
 
         post.addHeader("Auth-Schema", authSchema);
         post.addHeader("Api-Key", apiKey);
-        post.setEntity(new StringEntity(payload.toString()));
+        post.setEntity(new StringEntity(payload));
 
         try (CloseableHttpClient httpClient = HttpClients.createDefault();
              CloseableHttpResponse response = httpClient.execute(post)) {

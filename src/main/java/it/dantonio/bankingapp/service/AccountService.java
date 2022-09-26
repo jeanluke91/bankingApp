@@ -2,10 +2,12 @@ package it.dantonio.bankingapp.service;
 
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
-import it.dantonio.bankingapp.model.Account;
 import it.dantonio.bankingapp.model.AccountBalance;
 import it.dantonio.bankingapp.model.AccountTransaction;
+import it.dantonio.bankingapp.model.MoneyTransferBody;
 import it.dantonio.bankingapp.utils.HttpMethod;
+import it.dantonio.bankingapp.utils.LocalDateDeserializer;
+import it.dantonio.bankingapp.utils.LocalDateSerializer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.boot.configurationprocessor.json.JSONObject;
@@ -27,50 +29,11 @@ public class AccountService {
     Logger logger = Logger.getLogger(AccountService.class.getName());
 
 
-    private static final Gson gson = new GsonBuilder().registerTypeAdapter(LocalDate.class, new JsonDeserializer<LocalDate>() {
-        @Override
-        public LocalDate deserialize(JsonElement json, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
-            return LocalDate.parse(json.getAsJsonPrimitive().getAsString());
-        }
-    }).create();
+    private static final Gson gson = new GsonBuilder().registerTypeAdapter(LocalDate.class, new LocalDateSerializer())
+            .registerTypeAdapter(LocalDate.class, new LocalDateDeserializer())
+            .setPrettyPrinting().create();
 
-    public List<Account> getAllAccounts() throws IOException, JSONException {
-        logger.log(Level.INFO, "AccountService - getAllAccounts started ");
-        String uri = "/api/gbs/banking/v4.0/accounts";
-        List<Account> accounts = null;
-
-        JSONObject jsonResponse = httpMethod.doGet(uri);
-
-        if (jsonResponse != null) {
-            String jsonAccountList = jsonResponse.getJSONArray("list").toString();
-            Type listType = new TypeToken<List<Account>>() {
-            }.getType();
-            accounts = gson.fromJson(jsonAccountList, listType);
-
-        }
-        logger.log(Level.INFO, "AccountService - getAllAccounts finished");
-        return accounts;
-
-    }
-
-    public Account getAccountById(Long accountId) throws IOException, JSONException {
-        logger.log(Level.INFO, "AccountService - getAccountById started ");
-
-        String uri = "/api/gbs/banking/v4.0/accounts/" + accountId;
-        Account account = null;
-        JSONObject jsonResponse = httpMethod.doGet(uri);
-
-        if (jsonResponse != null) {
-            account = gson.fromJson(jsonResponse.toString(), Account.class);
-
-        }
-        logger.log(Level.INFO, "AccountService - getAccountById finished");
-
-        return account;
-
-    }
-
-    public AccountBalance getAccountBalanceById(Long accountId) throws IOException, JSONException {
+    public AccountBalance getAccountBalanceById(Long accountId) throws IOException {
         logger.log(Level.INFO, "AccountService - getAccountBalanceById started ");
 
         String uri = "/api/gbs/banking/v4.0/accounts/" + accountId + "/balance";
@@ -78,7 +41,7 @@ public class AccountService {
         JSONObject jsonResponse = httpMethod.doGet(uri);
 
         if (jsonResponse != null) {
-            accountBalance = gson.fromJson(jsonResponse.toString(), AccountBalance.class);
+            accountBalance = gson.fromJson(String.valueOf(jsonResponse), AccountBalance.class);
 
         }
         logger.log(Level.INFO, "AccountService - getAccountBalanceById finished");
@@ -94,7 +57,7 @@ public class AccountService {
         JSONObject jsonResponse = httpMethod.doGet(uri);
 
         if (jsonResponse != null) {
-            String jsonAccountTransactionsList = jsonResponse.getJSONArray("list").toString();
+            String jsonAccountTransactionsList = String.valueOf(jsonResponse.getJSONArray("list"));
             Type listType = new TypeToken<List<AccountTransaction>>() {
             }.getType();
             accountTransactions = gson.fromJson(jsonAccountTransactionsList, listType);
@@ -102,6 +65,22 @@ public class AccountService {
         }
         logger.log(Level.INFO, "AccountService - getTransactions finished");
         return accountTransactions;
+
+    }
+
+    public Object createMoneyTransfer(Long accountId, MoneyTransferBody moneyTransferBody) throws IOException, JSONException {
+        logger.log(Level.INFO, "AccountService - createMoneyTransfer started ");
+        String uri = "/api/gbs/banking/v4.0/accounts/" + accountId + "/payments/money-transfers";
+
+        String body = gson.toJson(moneyTransferBody);
+        JSONObject jsonResponse = httpMethod.doPost(uri, body);
+        Object obj = null;
+        if (jsonResponse != null) {
+            obj = gson.fromJson(String.valueOf(jsonResponse), Object.class);
+
+        }
+        logger.log(Level.INFO, "AccountService - createMoneyTransfer finished");
+        return obj;
 
     }
 }

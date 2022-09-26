@@ -3,6 +3,7 @@ package it.dantonio.bankingapp.model;
 import lombok.*;
 import lombok.experimental.Accessors;
 
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @AllArgsConstructor
@@ -15,6 +16,7 @@ public class Creditor implements Serializable {
 
     private String name;
 
+    @NotNull(message = "Account is mandatory")
     private Account account;
 
     private Address address;

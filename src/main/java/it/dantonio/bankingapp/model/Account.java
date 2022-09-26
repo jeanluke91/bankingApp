@@ -3,8 +3,8 @@ package it.dantonio.bankingapp.model;
 import lombok.*;
 import lombok.experimental.Accessors;
 
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
@@ -13,18 +13,8 @@ import java.time.LocalDate;
 @Accessors(chain = true)
 public class Account implements Serializable {
 
-    private String accountId;
-    private String iban;
-    private String abiCode;
-    private String cabCode;
-    private String countryCode;
-    private String internationalCin;
-    private String nationalCin;
-    private String account;
-    private String alias;
-    private String productName;
-    private String holderName;
-    private LocalDate activatedDate;
-    private String currency;
+    @NotNull(message = "accountCode is mandatory")
+    private String accountCode;
+    private String bicCode;
 
 }

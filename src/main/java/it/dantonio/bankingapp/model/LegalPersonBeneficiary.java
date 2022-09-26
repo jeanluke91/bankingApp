@@ -3,6 +3,7 @@ package it.dantonio.bankingapp.model;
 import lombok.*;
 import lombok.experimental.Accessors;
 
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @AllArgsConstructor
@@ -13,6 +14,7 @@ import java.io.Serializable;
 @Accessors(chain = true)
 public class LegalPersonBeneficiary implements Serializable {
 
+    @NotNull(message = "LegalPersonBeneficiary fiscalcode is mandatory")
     private String fiscalCode;
     private String legalRepresentativeFiscalCode;
 
