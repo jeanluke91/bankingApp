@@ -1,10 +1,13 @@
 package it.dantonio.bankingapp.model;
 
-import lombok.*;
-import lombok.experimental.Accessors;
-
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import javax.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.experimental.Accessors;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -14,10 +17,10 @@ import java.io.Serializable;
 @Accessors(chain = true)
 public class Creditor implements Serializable {
 
-    private String name;
+  private String name;
 
-    @NotNull(message = "Account is mandatory")
-    private Account account;
+  @NotNull(message = "Account is mandatory")
+  private Account account;
 
-    private Address address;
+  private Address address;
 }

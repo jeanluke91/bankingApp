@@ -1,12 +1,15 @@
 package it.dantonio.bankingapp.model;
 
 
-import lombok.*;
-import lombok.experimental.Accessors;
-
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.experimental.Accessors;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -16,9 +19,9 @@ import java.time.LocalDate;
 @Accessors(chain = true)
 public class AccountBalance implements Serializable {
 
-    private LocalDate date;
-    private BigDecimal balance;
-    private BigDecimal availableBalance;
-    private String currency;
+  private LocalDate date;
+  private BigDecimal balance;
+  private BigDecimal availableBalance;
+  private String currency;
 
 }

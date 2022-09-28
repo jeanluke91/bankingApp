@@ -1,10 +1,14 @@
 package it.dantonio.bankingapp.model;
 
-import lombok.*;
+import java.io.Serializable;
+import javax.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 
-import javax.validation.constraints.NotNull;
-import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
@@ -13,8 +17,8 @@ import java.io.Serializable;
 @Accessors(chain = true)
 public class Account implements Serializable {
 
-    @NotNull(message = "accountCode is mandatory")
-    private String accountCode;
-    private String bicCode;
+  @NotNull(message = "accountCode is mandatory")
+  private String accountCode;
+  private String bicCode;
 
 }

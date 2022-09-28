@@ -9,29 +9,33 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.configurationprocessor.json.JSONException;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 
 @Service
 public class MoneyTransferService {
-    @Autowired
-    private ClientMethod clientMethod;
 
-    @Value("${endpoint-money-transfer}")
-    private String endpoint;
+  @Autowired
+  private ClientMethod clientMethod;
 
-    Logger logger = Logger.getLogger(MoneyTransferService.class.getName());
-    public Object createMoneyTransfer(Long accountId, MoneyTransferBody moneyTransferBody) throws IOException, JSONException {
-        logger.log(Level.INFO, "MoneyTransferService - createMoneyTransfer started ");
-        String url = endpoint.replace("{accountId}", String.valueOf(accountId));
+  @Value("${endpoint-money-transfer}")
+  private String endpoint;
 
-        String json = new ObjectMapper().registerModule(new JavaTimeModule())
-                .writeValueAsString(moneyTransferBody);
+  Logger logger = Logger.getLogger(MoneyTransferService.class.getName());
 
-        String r = clientMethod.post(url, json);
+  public String createMoneyTransfer(Long accountId, MoneyTransferBody moneyTransferBody)
+      throws IOException {
+    logger.log(Level.INFO, "MoneyTransferService - createMoneyTransfer started ");
+    String url = endpoint.replace("{accountId}", String.valueOf(accountId));
 
-        logger.log(Level.INFO, "MoneyTransferService - createMoneyTransfer finished ");
+    String json = new ObjectMapper().registerModule(new JavaTimeModule())
+        .writeValueAsString(moneyTransferBody);
 
-        return null;
-    }
+//    String response = clientMethod.post(url, json);
+    String response = clientMethod.callHttpMethod(url, json, HttpMethod.POST);
+
+    logger.log(Level.INFO, "MoneyTransferService - createMoneyTransfer finished ");
+
+    return response;
+  }
 }

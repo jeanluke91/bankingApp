@@ -1,9 +1,12 @@
 package it.dantonio.bankingapp.model;
 
-import lombok.*;
-import lombok.experimental.Accessors;
-
 import java.io.Serializable;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.experimental.Accessors;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -13,7 +16,7 @@ import java.io.Serializable;
 @Accessors(chain = true)
 public class Address implements Serializable {
 
-    private String address;
-    private String city;
-    private String countryCode;
+  private String address;
+  private String city;
+  private String countryCode;
 }

@@ -7,7 +7,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.configurationprocessor.json.JSONException;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,23 +19,23 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/money-transfer")
 public class MoneyTransferController {
 
-    @Autowired
-    private MoneyTransferService moneyTransferService;
+  @Autowired
+  private MoneyTransferService moneyTransferService;
 
-    Logger logger = Logger.getLogger(MoneyTransferController.class.getName());
+  Logger logger = Logger.getLogger(MoneyTransferController.class.getName());
 
-    @PostMapping("/{accountId}/payments/money-transfers")
-    ResponseEntity<Object> createMoneyTransfer(
-            @PathVariable Long accountId,
-            @Valid @RequestBody MoneyTransferBody moneyTransferBody
-    ) throws JSONException, IOException {
-        logger.log(Level.INFO, "MoneyTransferController - createMoneyTransaction");
-        Object obj = moneyTransferService.createMoneyTransfer(accountId, moneyTransferBody);
+  @PostMapping(value = "/{accountId}/payments/money-transfers", produces = MediaType.APPLICATION_JSON_VALUE)
+  ResponseEntity<String> createMoneyTransfer(
+      @PathVariable Long accountId,
+      @Valid @RequestBody MoneyTransferBody moneyTransferBody
+  ) throws IOException {
+    logger.log(Level.INFO, "MoneyTransferController - createMoneyTransaction");
+    String response = moneyTransferService.createMoneyTransfer(accountId, moneyTransferBody);
 
-        if (obj != null) {
-            return ResponseEntity.ok(obj);
-        }
-        return ResponseEntity.noContent().build();
+    if (response != null) {
+      return ResponseEntity.ok(response);
     }
+    return ResponseEntity.noContent().build();
+  }
 
 }

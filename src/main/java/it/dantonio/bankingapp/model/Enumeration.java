@@ -1,9 +1,12 @@
 package it.dantonio.bankingapp.model;
 
-import lombok.*;
-import lombok.experimental.Accessors;
-
 import java.io.Serializable;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.experimental.Accessors;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -13,7 +16,7 @@ import java.io.Serializable;
 @Accessors(chain = true)
 public class Enumeration implements Serializable {
 
-    private String enumeration;
-    private String value;
+  private String enumeration;
+  private String value;
 
 }
