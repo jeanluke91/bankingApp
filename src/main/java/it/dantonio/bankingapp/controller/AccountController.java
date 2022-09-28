@@ -34,34 +34,4 @@ public class AccountController {
         }
         return ResponseEntity.noContent().build();
     }
-
-    @GetMapping("/{accountId}/transactions")
-    ResponseEntity<List<AccountTransaction>> getTransactions(
-            @PathVariable Long accountId,
-            @RequestParam String fromAccountingDate,
-            @RequestParam String toAccountingDate) throws IOException, JSONException {
-        logger.log(Level.INFO, "AccountCountroller - getTransactions");
-        List<AccountTransaction> accountTransactions = accountService.getTransactions(accountId, fromAccountingDate, toAccountingDate);
-
-        if (accountTransactions != null && accountTransactions.size() > 0) {
-            return ResponseEntity.ok(accountTransactions);
-        }
-        return ResponseEntity.noContent().build();
-
-    }
-
-    @PostMapping("/{accountId}/payments/money-transfers")
-    ResponseEntity<Object> createMoneyTransfer(
-            @PathVariable Long accountId,
-            @Valid @RequestBody MoneyTransferBody moneyTransferBody
-    ) throws JSONException, IOException {
-        logger.log(Level.INFO, "AccountCountroller - createMoneyTransaction");
-        Object obj = accountService.createMoneyTransfer(accountId, moneyTransferBody);
-
-        if (obj != null) {
-            return ResponseEntity.ok(obj);
-        }
-        return ResponseEntity.noContent().build();
-    }
-
 }

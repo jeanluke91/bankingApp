@@ -1,8 +1,10 @@
 package it.dantonio.bankingapp.utils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.configurationprocessor.json.JSONException;
-import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -26,16 +28,20 @@ public class ClientMethod {
         headers.add("Api-Key", apiKey);
     }
 
-    public JSONObject get(String endpoint) throws JSONException {
+    public String get(String endpoint) throws JSONException, JsonProcessingException {
         HttpEntity<String> requestEntity = new HttpEntity<>("", headers);
         ResponseEntity<String> responseEntity = rest.exchange(endpoint, HttpMethod.GET, requestEntity, String.class);
-        return new JSONObject(responseEntity.getBody());
+        return extractPayload(responseEntity.getBody());
     }
 
-    public JSONObject post(String endpoint, String json) throws JSONException {
+    public String post(String endpoint, String json) throws JSONException, JsonProcessingException {
         HttpEntity<String> requestEntity = new HttpEntity<>(json, headers);
         ResponseEntity<String> responseEntity = rest.exchange(endpoint, HttpMethod.POST, requestEntity, String.class);
-        return new JSONObject(responseEntity.getBody());
+        return extractPayload(responseEntity.getBody());
     }
 
+    private String extractPayload(String bodyResponse) throws JsonProcessingException {
+        JsonNode jsonNode = new ObjectMapper().readTree(bodyResponse).get("payload");
+        return jsonNode.get("list") != null ? jsonNode.get("list").toString() : jsonNode.toString();
+    }
 }
