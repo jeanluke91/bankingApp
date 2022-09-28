@@ -24,7 +24,7 @@ public class MoneyTransferController {
 
   Logger logger = Logger.getLogger(MoneyTransferController.class.getName());
 
-  @PostMapping(value = "/{accountId}/payments/money-transfers", produces = MediaType.APPLICATION_JSON_VALUE)
+  @PostMapping(value = "/{accountId}/payments", produces = MediaType.APPLICATION_JSON_VALUE)
   ResponseEntity<String> createMoneyTransfer(
       @PathVariable Long accountId,
       @Valid @RequestBody MoneyTransferBody moneyTransferBody

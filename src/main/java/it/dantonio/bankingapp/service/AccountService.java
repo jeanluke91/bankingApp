@@ -1,7 +1,6 @@
 package it.dantonio.bankingapp.service;
 
 import it.dantonio.bankingapp.utils.ClientMethod;
-import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,10 +19,9 @@ public class AccountService {
 
   Logger logger = Logger.getLogger(AccountService.class.getName());
 
-  public String getAccountBalanceById(Long accountId) throws IOException {
+  public String getAccountBalanceById(Long accountId) {
     logger.log(Level.INFO, "AccountService - getAccountBalanceById started ");
     String url = endpoint.replace("{accountId}", String.valueOf(accountId));
-//    String respomse = clientMethod.get(url);
     String respomse = clientMethod.callHttpMethod(url, null, HttpMethod.GET);
     logger.log(Level.INFO, "AccountService - getAccountBalanceById finished");
     return respomse;

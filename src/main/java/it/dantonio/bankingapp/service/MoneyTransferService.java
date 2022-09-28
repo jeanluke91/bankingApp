@@ -30,8 +30,6 @@ public class MoneyTransferService {
 
     String json = new ObjectMapper().registerModule(new JavaTimeModule())
         .writeValueAsString(moneyTransferBody);
-
-//    String response = clientMethod.post(url, json);
     String response = clientMethod.callHttpMethod(url, json, HttpMethod.POST);
 
     logger.log(Level.INFO, "MoneyTransferService - createMoneyTransfer finished ");

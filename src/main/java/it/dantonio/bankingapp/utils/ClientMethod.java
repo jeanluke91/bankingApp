@@ -3,6 +3,8 @@ package it.dantonio.bankingapp.utils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpEntity;
@@ -20,6 +22,9 @@ public class ClientMethod {
   private final RestTemplate rest;
   private final HttpHeaders headers;
 
+  Logger logger = Logger.getLogger(ClientMethod.class.getName());
+
+
   public ClientMethod(@Value("${auth-schema}") String authSchema,
       @Value("${api-key}") String apiKey) {
     this.rest = new RestTemplate();
@@ -29,13 +34,17 @@ public class ClientMethod {
     headers.add("Api-Key", apiKey);
   }
 
-  public String callHttpMethod(String endpoint, String json, HttpMethod httpMethod)
-      throws JsonProcessingException {
-    HttpEntity<String> requestEntity = new HttpEntity<>(json, headers);
-    ResponseEntity<String> responseEntity = rest.exchange(endpoint, httpMethod, requestEntity,
-        String.class);
-    if (responseEntity.getStatusCode() == HttpStatus.OK) {
-      return extractPayload(responseEntity.getBody());
+  public String callHttpMethod(String endpoint, String json, HttpMethod httpMethod) {
+    try {
+      HttpEntity<String> requestEntity = new HttpEntity<>(json, headers);
+      ResponseEntity<String> responseEntity = rest.exchange(endpoint, httpMethod, requestEntity,
+          String.class);
+      if (responseEntity.getStatusCode() == HttpStatus.OK) {
+        return extractPayload(responseEntity.getBody());
+      }
+    } catch (Exception e){
+      logger.log(Level.SEVERE, "Exception calling " + endpoint);
+      logger.log(Level.SEVERE, e.getMessage());
     }
     return null;
   }
