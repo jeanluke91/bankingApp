@@ -42,19 +42,6 @@ public class MoneyTransferServiceTest {
 
   private final static String MONEY_TRANSFER_JSON = "money_transfer_payload.json";
 
-
-  private String readFromJsonFile(String fileName) throws IOException, URISyntaxException {
-
-    Path path = Paths.get(getClass().getClassLoader()
-        .getResource(fileName).toURI());
-
-    Stream<String> lines = Files.lines(path);
-    String payload = lines.collect(Collectors.joining("\n"));
-    lines.close();
-
-    return payload;
-  }
-
   @Test
   public void createMoneyTransferWithError()
       throws Exception {
@@ -74,6 +61,19 @@ public class MoneyTransferServiceTest {
 
     Assertions.assertEquals(rspContent.get("rsp_code"),
         ResponseCode.MONEY_TRANSFER_ERROR.getCode());
+  }
+
+
+  private String readFromJsonFile(String fileName) throws IOException, URISyntaxException {
+
+    Path path = Paths.get(getClass().getClassLoader()
+        .getResource(fileName).toURI());
+
+    Stream<String> lines = Files.lines(path);
+    String payload = lines.collect(Collectors.joining("\n"));
+    lines.close();
+
+    return payload;
   }
 
 }
