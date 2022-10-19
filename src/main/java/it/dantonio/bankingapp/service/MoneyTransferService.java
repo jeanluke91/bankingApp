@@ -3,8 +3,8 @@ package it.dantonio.bankingapp.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import it.dantonio.bankingapp.model.MoneyTransferBody;
+import it.dantonio.bankingapp.model.MoneyTransferResponse;
 import it.dantonio.bankingapp.utils.ClientMethod;
-import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,10 +21,13 @@ public class MoneyTransferService {
   @Value("${endpoint-money-transfer}")
   private String endpoint;
 
+  @Autowired
+  ObjectMapper objectMapper;
   Logger logger = Logger.getLogger(MoneyTransferService.class.getName());
 
-  public String createMoneyTransfer(Long accountId, MoneyTransferBody moneyTransferBody)
-      throws IOException {
+  public MoneyTransferResponse createMoneyTransfer(Long accountId,
+      MoneyTransferBody moneyTransferBody)
+      throws Exception {
     logger.log(Level.INFO, "MoneyTransferService - createMoneyTransfer started ");
     String url = endpoint.replace("{accountId}", String.valueOf(accountId));
 
@@ -33,7 +36,6 @@ public class MoneyTransferService {
     String response = clientMethod.callHttpMethod(url, json, HttpMethod.POST);
 
     logger.log(Level.INFO, "MoneyTransferService - createMoneyTransfer finished ");
-
-    return response;
+    return objectMapper.readValue(response, MoneyTransferResponse.class);
   }
 }

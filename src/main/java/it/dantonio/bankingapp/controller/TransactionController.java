@@ -1,7 +1,10 @@
 package it.dantonio.bankingapp.controller;
 
+import it.dantonio.bankingapp.model.AccountTransaction;
 import it.dantonio.bankingapp.service.TransactionService;
-import java.io.IOException;
+import it.dantonio.bankingapp.utils.CustomResponse;
+import it.dantonio.bankingapp.utils.ResponseCode;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,21 +23,26 @@ public class TransactionController {
   @Autowired
   private TransactionService transactionService;
 
+  @Autowired
+  private CustomResponse customResponse;
+
   Logger logger = Logger.getLogger(TransactionController.class.getName());
 
   @GetMapping(value = "/{accountId}", produces = MediaType.APPLICATION_JSON_VALUE)
-  ResponseEntity<String> getAccountTransactions(
+  ResponseEntity<Object> getAccountTransactions(
       @PathVariable Long accountId,
       @RequestParam String fromAccountingDate,
-      @RequestParam String toAccountingDate) throws IOException {
+      @RequestParam String toAccountingDate) throws Exception {
     logger.log(Level.INFO, "TransactionController - getTransactions");
-    String accountTransactions = transactionService.getAccountTransactions(accountId,
+    List<AccountTransaction> accountTransactions = transactionService.getAccountTransactions(
+        accountId,
         fromAccountingDate, toAccountingDate);
 
-    if (accountTransactions != null) {
-      return ResponseEntity.ok(accountTransactions);
+    if (accountTransactions != null && accountTransactions.size() > 0) {
+      return customResponse.generateResponse(ResponseCode.OK, accountTransactions);
     }
-    return ResponseEntity.noContent().build();
+    return customResponse.generateResponse(ResponseCode.NO_TRANSACTION_FOUND.getCode(),
+        ResponseCode.NO_TRANSACTION_FOUND.getMsg(), accountTransactions);
 
   }
 

@@ -1,7 +1,9 @@
 package it.dantonio.bankingapp.controller;
 
+import it.dantonio.bankingapp.model.AccountBalance;
 import it.dantonio.bankingapp.service.AccountService;
-import java.io.IOException;
+import it.dantonio.bankingapp.utils.CustomResponse;
+import it.dantonio.bankingapp.utils.ResponseCode;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,17 +21,22 @@ public class AccountController {
   @Autowired
   private AccountService accountService;
 
+  @Autowired
+  private CustomResponse customResponse;
+
   Logger logger = Logger.getLogger(AccountController.class.getName());
 
   @GetMapping(value = "/{accountId}/balance", produces = MediaType.APPLICATION_JSON_VALUE)
-  ResponseEntity<String> getAccountBalanceById(@PathVariable Long accountId)
-      throws IOException {
+  ResponseEntity<Object> getAccountBalanceById(@PathVariable Long accountId)
+      throws Exception {
     logger.log(Level.INFO, "AccountCountroller - getAccountBalanceById");
-    String accountBalance = accountService.getAccountBalanceById(accountId);
-
+    AccountBalance accountBalance = accountService.getAccountBalanceById(accountId);
     if (accountBalance != null) {
-      return ResponseEntity.ok(accountBalance);
+      return customResponse.generateResponse(ResponseCode.OK, accountBalance);
     }
-    return ResponseEntity.noContent().build();
+    return customResponse.generateResponse(ResponseCode.NO_BALANCE_FOUND.getCode(),
+        ResponseCode.NO_BALANCE_FOUND.getMsg(),
+        null);
   }
+
 }

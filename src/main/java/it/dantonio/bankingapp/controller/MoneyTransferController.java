@@ -1,8 +1,10 @@
 package it.dantonio.bankingapp.controller;
 
 import it.dantonio.bankingapp.model.MoneyTransferBody;
+import it.dantonio.bankingapp.model.MoneyTransferResponse;
 import it.dantonio.bankingapp.service.MoneyTransferService;
-import java.io.IOException;
+import it.dantonio.bankingapp.utils.CustomResponse;
+import it.dantonio.bankingapp.utils.ResponseCode;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.validation.Valid;
@@ -22,20 +24,30 @@ public class MoneyTransferController {
   @Autowired
   private MoneyTransferService moneyTransferService;
 
+  @Autowired
+  private CustomResponse customResponse;
+
   Logger logger = Logger.getLogger(MoneyTransferController.class.getName());
 
   @PostMapping(value = "/{accountId}/payments", produces = MediaType.APPLICATION_JSON_VALUE)
-  ResponseEntity<String> createMoneyTransfer(
+  ResponseEntity<Object> createMoneyTransfer(
       @PathVariable Long accountId,
-      @Valid @RequestBody MoneyTransferBody moneyTransferBody
-  ) throws IOException {
+      @Valid @RequestBody MoneyTransferBody moneyTransferBody) {
     logger.log(Level.INFO, "MoneyTransferController - createMoneyTransaction");
-    String response = moneyTransferService.createMoneyTransfer(accountId, moneyTransferBody);
+    try {
+      MoneyTransferResponse moneyTransferResponse = moneyTransferService.createMoneyTransfer(
+          accountId, moneyTransferBody);
+      if (moneyTransferResponse != null) {
+        return customResponse.generateResponse(ResponseCode.OK, moneyTransferResponse);
+      }
 
-    if (response != null) {
-      return ResponseEntity.ok(response);
+      return customResponse.generateResponse(ResponseCode.UNEXPECTED_ERROR.getCode(),
+          ResponseCode.UNEXPECTED_ERROR.getMsg(), null);
+
+    } catch (Exception e) {
+      return customResponse.generateResponse(ResponseCode.MONEY_TRANSFER_ERROR.getCode(),
+          ResponseCode.MONEY_TRANSFER_ERROR.getMsg() + accountId, null);
     }
-    return ResponseEntity.noContent().build();
   }
 
 }

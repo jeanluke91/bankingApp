@@ -4,12 +4,19 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import it.dantonio.bankingapp.utils.ResponseCode;
+import java.util.HashMap;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.ResultActions;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -18,19 +25,17 @@ public class TransactionServiceTest {
   @Autowired
   private MockMvc mvc;
 
-  @Test
-  public void getTransactionsWithoutParams()
-      throws Exception {
-    mvc.perform(get("https://localhost:8080/transactions/14537780")
-            .contentType(MediaType.APPLICATION_JSON))
-        .andExpect(status().isBadRequest());
-  }
+  @Value("${test-endpoint-transactions}")
+  private String endpoint;
+
+  @Value("${test-accountId}")
+  private String accountId;
 
   @Test
   public void getTransactionsWithResults()
       throws Exception {
     mvc.perform(
-            get("https://localhost:8080/transactions/14537780?fromAccountingDate=2015-01-01&toAccountingDate=2022-09-20")
+            get(endpoint.replace("{accountId}", accountId))
                 .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(content()
@@ -38,13 +43,19 @@ public class TransactionServiceTest {
   }
 
   @Test
-  public void getAccountBalanceWithNoResults()
+  public void getTransactionsWithNoResults()
       throws Exception {
-    mvc.perform(
-            get("https://localhost:8080/transactions/14537780?fromAccountingDate=2010-01-01&toAccountingDate=2010-09-20")
-                .contentType(MediaType.APPLICATION_JSON))
-        .andExpect(status().isOk())
-        .andExpect(content().string("[]"));
+    ResultActions result = mvc.perform(
+        get(endpoint.replace("{accountId}", accountId))
+            .contentType(MediaType.APPLICATION_JSON));
+
+    MvcResult res = result.andReturn();
+
+    HashMap rspContent = new ObjectMapper().readValue(
+        res.getResponse().getContentAsString(), HashMap.class);
+
+    Assertions.assertEquals(rspContent.get("rsp_code"),
+        ResponseCode.NO_TRANSACTION_FOUND.getCode());
   }
 
 }

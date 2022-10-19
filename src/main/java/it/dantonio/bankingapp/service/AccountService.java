@@ -1,5 +1,7 @@
 package it.dantonio.bankingapp.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import it.dantonio.bankingapp.model.AccountBalance;
 import it.dantonio.bankingapp.utils.ClientMethod;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -17,14 +19,17 @@ public class AccountService {
   @Value("${endpoint-account-balance}")
   private String endpoint;
 
+  @Autowired
+  ObjectMapper objectMapper;
+
   Logger logger = Logger.getLogger(AccountService.class.getName());
 
-  public String getAccountBalanceById(Long accountId) {
+  public AccountBalance getAccountBalanceById(Long accountId) throws Exception {
     logger.log(Level.INFO, "AccountService - getAccountBalanceById started ");
     String url = endpoint.replace("{accountId}", String.valueOf(accountId));
-    String respomse = clientMethod.callHttpMethod(url, null, HttpMethod.GET);
+    String response = clientMethod.callHttpMethod(url, null, HttpMethod.GET);
     logger.log(Level.INFO, "AccountService - getAccountBalanceById finished");
-    return respomse;
+    return objectMapper.readValue(response, AccountBalance.class);
 
   }
 
